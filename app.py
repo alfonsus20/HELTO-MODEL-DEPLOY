@@ -37,23 +37,25 @@ def predict():
             jsonify(code='BAD_REQUEST', message='File harus memiliki nama'),
             400)
 
-    if allowed_file(file.filename):
-        image_pil = Image.open(file).resize((64, 64))
-        test_image = image.img_to_array(image_pil)
-        test_image = np.expand_dims(test_image, axis=0)
-        result = model.predict(test_image)
-
-        if result[0][0] == 1:
-            prediction = 'early_blight'
-        elif result[0][1] == 1:
-            prediction = 'healthy'
-        else:
-            prediction = 'late_blight'
-
+    if allowed_file(file.filename) == False:
         return make_response(
-            jsonify(code='SUCCESS',
-                    message='Prediksi berhasil',
-                    data=prediction), 200)
+            jsonify(code='BAD_REQUEST', message='File harus bertipe jpg, jpeg, atau png'),
+            400)
+
+    image_pil = Image.open(file).resize((64, 64))
+    test_image = image.img_to_array(image_pil)
+    test_image = np.expand_dims(test_image, axis=0)
+    result = model.predict(test_image)
+
+    if result[0][0] == 1:
+        prediction = 'early_blight'
+    elif result[0][1] == 1:
+        prediction = 'healthy'
+    else:
+        prediction = 'late_blight'
+    return make_response(
+        jsonify(code='SUCCESS', message='Prediksi berhasil', data=prediction),
+        200)
 
 
 if __name__ == '__main__':
