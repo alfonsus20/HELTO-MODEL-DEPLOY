@@ -50,9 +50,6 @@ def predict():
         else:
             prediction = 'late_blight'
 
-        print('==== PRED =====')
-        print(result)
-
         return make_response(
             jsonify(code='SUCCESS',
                     message='Prediksi berhasil',
