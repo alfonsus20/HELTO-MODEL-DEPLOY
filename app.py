@@ -1,9 +1,9 @@
 from datasets import Image
 from flask import Flask, jsonify, make_response, request
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
-from keras.preprocessing import image
+from tensorflow.keras.preprocessing import image
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
