@@ -2,12 +2,13 @@ from datasets import Image
 from flask import Flask, jsonify, make_response, request
 from keras.models import load_model
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image
+from keras.preprocessing import image
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
-model = load_model('keras_model.h5')
+model = load_model('model.h5')
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
@@ -37,20 +38,25 @@ def predict():
             400)
 
     if allowed_file(file.filename):
-        data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-        image = Image.open(file)
-        size = (224, 224)
-        image = ImageOps.fit(image, size, Image.ANTIALIAS)
-        image_array = np.asarray(image)
-        normalized_image_array = (image_array.astype(np.float32) / 127.0) - 1
-        data[0] = normalized_image_array
-        prediction = model.predict(data)
-        classes = ["early_bright", "healthy", "late_bright"]
+        image_pil = Image.open(file).resize((64, 64))
+        test_image = image.img_to_array(image_pil)
+        test_image = np.expand_dims(test_image, axis=0)
+        result = model.predict(test_image)
+
+        if result[0][0] == 1:
+            prediction = 'early_blight'
+        elif result[0][1] == 1:
+            prediction = 'healthy'
+        else:
+            prediction = 'late_blight'
+
+        print('==== PRED =====')
+        print(result)
 
         return make_response(
             jsonify(code='SUCCESS',
                     message='Prediksi berhasil',
-                    data=classes[np.argmax(prediction)]), 200)
+                    data=prediction), 200)
 
 
 if __name__ == '__main__':
