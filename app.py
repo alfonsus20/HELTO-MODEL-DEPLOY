@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, make_response, request
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from datasets import Image
 from tensorflow.keras.models import load_model
 from PIL import Image
@@ -7,7 +7,7 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 
 app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
+# app.config['JSON_SORT_KEYS'] = False
 CORS(app)
 
 model = load_model('model.h5')
