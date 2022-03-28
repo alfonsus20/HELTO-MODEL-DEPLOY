@@ -41,8 +41,8 @@ def predict():
 
     if allowed_file(file.filename) == False:
         return make_response(
-            jsonify(code='BAD_REQUEST', message='File harus bertipe jpg, jpeg, atau png'),
-            400)
+            jsonify(code='BAD_REQUEST',
+                    message='File harus bertipe jpg, jpeg, atau png'), 400)
 
     image_pil = Image.open(file).resize((64, 64))
     test_image = image.img_to_array(image_pil)
@@ -50,11 +50,11 @@ def predict():
     result = model.predict(test_image)
 
     if result[0][0] == 1:
-        prediction = 'early_blight'
+        prediction = {'variant': 'early_blight', 'description': 'desc early'}
     elif result[0][1] == 1:
-        prediction = 'healthy'
+        prediction = {'variant': 'healthy', 'description': 'desc healthy'}
     else:
-        prediction = 'late_blight'
+        prediction = {'variant': 'late_blight', 'description': 'desc late_blight'}
     return make_response(
         jsonify(code='SUCCESS', message='Prediksi berhasil', data=prediction),
         200)
